@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{% if order_item %}Изменить элемент{% else %}Добавить элемент{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if order_item %}Изменить элемент{% else %}Добавить элемент{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="menu_item">Выберите блюдо:</label>
+    <select name="menu_item" id="menu_item">
+        {% for menu_item in menu_items %}
+        <option value="{{ menu_item.id }}" {% if order_item and order_item.menu_item.id == menu_item.id %}selected{% endif %}>
+            {{ menu_item.name }} - {{ menu_item.price|floatformat:2 }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <label for="quantity">Количество:</label>
+    <input type="number" name="quantity" id="quantity" value="{{ order_item.quantity|default:1 }}" min="1">
+
+    <br><br>
+
+    <button type="submit">Сохранить</button>
+</form>
+
+<a href="{% url 'order_items_list' order_item.order.id %}">Назад к элементам заказа</a>
+{% endblock %}

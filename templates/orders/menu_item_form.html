@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Menu Item Form{% endblock %}
+{% block content %}
+<h2>Add/Edit Menu Item</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endblock %}
