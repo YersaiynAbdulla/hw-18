@@ -13,6 +13,7 @@
         <a href="{% url 'order_list' %}">Orders</a>
     </nav>
     <hr>
+    {% load custom_filters %}
     {% block content %}{% endblock %}
 </body>
 </html>

@@ -4,7 +4,13 @@
 <h2>Меню</h2>
 <ul>
     {% for item in items %}
-        <li>{{ item.name }} - {{ item.price }}₸</li>
+        <li>{{ item.name }} - {{ item.price }}₸ 
+            <a href="{% url 'menu_item_edit' item.id %}">Редактировать</a> | 
+            <a href="{% url 'menu_item_delete' item.id %}">Удалить</a>
+        </li>
+    {% empty %}
+        <li>Нет доступных блюд.</li>
     {% endfor %}
 </ul>
+<a href="{% url 'menu_item_add' %}">Добавить блюдо</a>
 {% endblock %}
