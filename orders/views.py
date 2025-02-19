@@ -34,13 +34,21 @@ class CustomerDeleteView(DeleteView):
     success_url = reverse_lazy('customer_list')
 
 # --- MenuItem Views ---
-class MenuItemListView(TemplateView):
-    template_name = 'orders/menu_item_list.html'
+from django.views.generic import ListView
+from .models import MenuItem
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['items'] = MenuItem.objects.all()
-        return context
+class MenuItemListView(ListView):
+    model = MenuItem
+    template_name = 'menu/menu_item_list.html'
+    context_object_name = 'menu_items'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        category = self.kwargs.get('category')
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset
+
 
 class MenuItemCreateView(FormView):
     template_name = 'orders/menu_item_form.html'
@@ -63,17 +71,21 @@ class MenuItemDeleteView(DeleteView):
     success_url = reverse_lazy('menu_item_list')
 
 # --- Order Views ---
-class OrderListView(TemplateView):
-    template_name = 'orders/order_list.html'
+from django.views.generic import ListView
+from .models import Order
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+class OrderListView(ListView):
+    model = Order
+    template_name = 'orders/order_list.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
         status = self.kwargs.get('status')
         if status:
-            context['orders'] = Order.objects.filter(status=status)
-        else:
-            context['orders'] = Order.objects.all()
-        return context
+            queryset = queryset.filter(status=status)
+        return queryset
+
 
 class OrderCreateView(FormView):
     template_name = 'orders/order_form.html'

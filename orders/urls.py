@@ -16,6 +16,12 @@ urlpatterns = [
     path('menu-items/add/', MenuItemCreateView.as_view(), name='menu_item_add'),
     path('menu-items/edit/<int:pk>/', MenuItemUpdateView.as_view(), name='menu_item_edit'),
     path('menu-items/delete/<int:pk>/', MenuItemDeleteView.as_view(), name='menu_item_delete'),
+    
+    # Фильтрация блюд по категории
+    path('menu-items/category/<str:category>/', MenuItemListView.as_view(), name='menu_item_by_category'),
+
+    # Фильтрация заказов по статусу
+    path('orders/status/<str:status>/', OrderListView.as_view(), name='order_list_by_status'),
 
     path('orders/', OrderListView.as_view(), name='order_list'),
     path('orders/add/', OrderCreateView.as_view(), name='order_add'),
