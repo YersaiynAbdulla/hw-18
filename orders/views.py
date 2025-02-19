@@ -1,8 +1,8 @@
-from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
+from django.views.generic import TemplateView, FormView, UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from .models import Customer, MenuItem, Order, OrderItem
-from .forms import CustomerForm, MenuItemForm, OrderForm
+from .forms import CustomerForm, MenuItemForm, OrderForm, OrderItemForm
 
 # --- Customer Views ---
 class CustomerListView(TemplateView):
@@ -94,3 +94,36 @@ class OrderDeleteView(DeleteView):
     model = Order
     template_name = 'orders/order_confirm_delete.html'
     success_url = reverse_lazy('order_list')
+
+# --- Order Item Views ---
+class OrderItemsListView(TemplateView):
+    template_name = 'orders/order_items_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        order = get_object_or_404(Order, id=self.kwargs['order_id'])
+        context['order'] = order
+        context['items'] = OrderItem.objects.filter(order=order)
+        return context
+
+class OrderItemCreateView(FormView):
+    template_name = 'orders/order_item_form.html'
+    form_class = OrderItemForm
+
+    def form_valid(self, form):
+        order = get_object_or_404(Order, id=self.kwargs['order_id'])
+        order_item = form.save(commit=False)
+        order_item.order = order
+        order_item.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('order_items_list', kwargs={'order_id': self.kwargs['order_id']})
+
+class OrderItemUpdateView(UpdateView):
+    model = OrderItem
+    form_class = OrderItemForm
+    template_name = 'orders/order_item_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('order_items_list', kwargs={'order_id': self.object.order.id})
